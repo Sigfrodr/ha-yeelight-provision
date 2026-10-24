@@ -6,11 +6,16 @@ import json
 
 from cryptography.hazmat.primitives import padding
 from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
+import pytest
 
 from custom_components.yeelight_provision import miio
 from custom_components.yeelight_provision.const import PAIRING_SSID_RE
 from custom_components.yeelight_provision.provision import _parse_ssdp
 from custom_components.yeelight_provision.wifi import _signal_dbm
+
+# Le harnais HA (pytest-socket) bloque les sockets ; le faux appareil ecoute
+# sur 127.0.0.1. Le marqueur n'existe pas sans le harnais : il est alors ignore.
+pytestmark = pytest.mark.enable_socket
 
 TOKEN = bytes.fromhex("00112233445566778899aabbccddeeff")
 DID = 0x11770F83
