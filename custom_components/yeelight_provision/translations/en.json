@@ -1,0 +1,77 @@
+{
+  "config": {
+    "flow_title": "{name}",
+    "step": {
+      "user": {
+        "title": "Yeelight provisioning",
+        "description": "Home Assistant will use this Wi-Fi interface to join the access point of bulbs in pairing mode and hand them the network below. The interface should be dedicated to this.",
+        "data": {
+          "interface": "Wi-Fi interface",
+          "ssid": "2.4 GHz Wi-Fi network for the bulbs",
+          "password": "Network password",
+          "scan_interval": "Automatic search every (0 = never)"
+        }
+      },
+      "pick": {
+        "title": "Bulbs in pairing mode",
+        "data": {
+          "bssid": "Bulb access point"
+        }
+      },
+      "confirm": {
+        "title": "Provision {ap}",
+        "description": "The bulb will join **{ssid}**, then be added to the Yeelight integration.",
+        "data": {
+          "name": "Bulb name (optional)"
+        }
+      }
+    },
+    "progress": {
+      "provision": "Joining access point {ap}, sending the {ssid} credentials, then waiting for the bulb on the home network. This can take up to 2 minutes."
+    },
+    "error": {
+      "no_net_admin": "Home Assistant is not allowed to drive Wi-Fi: add the NET_ADMIN and NET_RAW capabilities to the container, then recreate it.",
+      "interface_not_found": "Interface not found.",
+      "wifi_error": "The Wi-Fi interface does not respond (see the log)."
+    },
+    "abort": {
+      "already_configured": "Already configured.",
+      "already_in_progress": "Provisioning already in progress for this bulb.",
+      "no_wireless_interface": "No Wi-Fi interface on the host.",
+      "hub_missing": "Set up the Yeelight Provision integration first.",
+      "hub_not_loaded": "The Yeelight Provision integration is not loaded.",
+      "no_bulbs_found": "No bulb in pairing mode. Reset the bulb (5 cycles on 2 s / off 2 s, until it cycles colours) and retry near the host.",
+      "wifi_error": "The Wi-Fi interface does not respond (see the log).",
+      "no_net_admin": "Home Assistant is not allowed to drive Wi-Fi: add the NET_ADMIN and NET_RAW capabilities to the container.",
+      "interface_not_found": "Wi-Fi interface not found.",
+      "connect_failed": "Could not join the bulb access point (too far?).",
+      "no_response": "The bulb does not answer miIO on its access point.",
+      "token_hidden": "The bulb is already paired and no longer reveals its token. Reset it (5 cycles of 2 s) and retry.",
+      "router_refused": "The bulb refused the Wi-Fi credentials (see the log).",
+      "unknown": "Unexpected error (see the log).",
+      "provisioned": "{model} bulb joined {ssid} ({host}) and was added to the Yeelight integration.",
+      "provisioned_already_configured": "{model} bulb joined {ssid} ({host}). It was already in the Yeelight integration, which updates its address on its own.",
+      "provisioned_not_added": "{model} bulb joined {ssid} ({host}), but the Yeelight integration could not add it: add it manually.",
+      "provisioned_not_found": "Credentials sent to the {model} bulb (id {device_id}), but it did not show up on {ssid} within 2 minutes. Check the password and that the network is 2.4 GHz."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Yeelight provisioning",
+        "data": {
+          "ssid": "2.4 GHz Wi-Fi network for the bulbs",
+          "password": "New password (empty = unchanged)",
+          "scan_interval": "Automatic search every (0 = never)"
+        }
+      }
+    }
+  },
+  "entity": {
+    "button": {
+      "scan": {
+        "name": "Search for bulbs in pairing mode"
+      }
+    }
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "domain": "yeelight_provision",
+  "name": "Yeelight Provision",
+  "after_dependencies": ["yeelight"],
+  "codeowners": [],
+  "config_flow": true,
+  "integration_type": "hub",
+  "iot_class": "local_polling",
+  "loggers": ["pyroute2"],
+  "requirements": ["pyroute2>=0.9.6"],
+  "version": "0.1.0"
+}

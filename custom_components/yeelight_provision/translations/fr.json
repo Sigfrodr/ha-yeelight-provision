@@ -1,0 +1,77 @@
+{
+  "config": {
+    "flow_title": "{name}",
+    "step": {
+      "user": {
+        "title": "Appairage Yeelight",
+        "description": "Home Assistant utilisera cette interface Wi-Fi pour rejoindre le point d'accès des ampoules en mode appairage, puis leur transmettre le réseau ci-dessous. L'interface doit être réservée à cet usage.",
+        "data": {
+          "interface": "Interface Wi-Fi",
+          "ssid": "Réseau Wi-Fi 2,4 GHz des ampoules",
+          "password": "Mot de passe du réseau",
+          "scan_interval": "Recherche automatique toutes les (0 = jamais)"
+        }
+      },
+      "pick": {
+        "title": "Ampoules en mode appairage",
+        "data": {
+          "bssid": "Point d'accès de l'ampoule"
+        }
+      },
+      "confirm": {
+        "title": "Appairer {ap}",
+        "description": "L'ampoule va rejoindre **{ssid}**, puis sera ajoutée à l'intégration Yeelight.",
+        "data": {
+          "name": "Nom de l'ampoule (facultatif)"
+        }
+      }
+    },
+    "progress": {
+      "provision": "Connexion au point d'accès {ap}, envoi des identifiants de {ssid}, puis attente de l'ampoule sur le réseau domestique. Cela peut prendre jusqu'à 2 minutes."
+    },
+    "error": {
+      "no_net_admin": "Home Assistant n'a pas le droit de piloter le Wi-Fi : ajouter les capacités NET_ADMIN et NET_RAW au conteneur, puis le recréer.",
+      "interface_not_found": "Interface introuvable.",
+      "wifi_error": "L'interface Wi-Fi ne répond pas (voir le journal)."
+    },
+    "abort": {
+      "already_configured": "Déjà configuré.",
+      "already_in_progress": "Appairage déjà en cours pour cette ampoule.",
+      "no_wireless_interface": "Aucune interface Wi-Fi sur l'hôte.",
+      "hub_missing": "Configurer d'abord l'intégration Yeelight Provision.",
+      "hub_not_loaded": "L'intégration Yeelight Provision n'est pas chargée.",
+      "no_bulbs_found": "Aucune ampoule en mode appairage. Réinitialiser l'ampoule (5 cycles allumé 2 s / éteint 2 s, jusqu'au cycle de couleurs) et réessayer près de l'hôte.",
+      "wifi_error": "L'interface Wi-Fi ne répond pas (voir le journal).",
+      "no_net_admin": "Home Assistant n'a pas le droit de piloter le Wi-Fi : ajouter les capacités NET_ADMIN et NET_RAW au conteneur.",
+      "interface_not_found": "Interface Wi-Fi introuvable.",
+      "connect_failed": "Impossible de rejoindre le point d'accès de l'ampoule (trop loin ?).",
+      "no_response": "L'ampoule ne répond pas en miIO sur son point d'accès.",
+      "token_hidden": "L'ampoule est déjà appairée et ne révèle plus son token. La réinitialiser (5 cycles de 2 s) et réessayer.",
+      "router_refused": "L'ampoule a refusé les identifiants Wi-Fi (voir le journal).",
+      "unknown": "Erreur inattendue (voir le journal).",
+      "provisioned": "Ampoule {model} appairée sur {ssid} ({host}) et ajoutée à l'intégration Yeelight.",
+      "provisioned_already_configured": "Ampoule {model} appairée sur {ssid} ({host}). Elle était déjà dans l'intégration Yeelight, dont l'adresse se met à jour seule.",
+      "provisioned_not_added": "Ampoule {model} appairée sur {ssid} ({host}), mais l'intégration Yeelight n'a pas pu l'ajouter : l'ajouter à la main.",
+      "provisioned_not_found": "Identifiants transmis à l'ampoule {model} (id {device_id}), mais elle n'est pas apparue sur {ssid} en 2 minutes. Vérifier le mot de passe et que le réseau est en 2,4 GHz."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Appairage Yeelight",
+        "data": {
+          "ssid": "Réseau Wi-Fi 2,4 GHz des ampoules",
+          "password": "Nouveau mot de passe (vide = inchangé)",
+          "scan_interval": "Recherche automatique toutes les (0 = jamais)"
+        }
+      }
+    }
+  },
+  "entity": {
+    "button": {
+      "scan": {
+        "name": "Rechercher les ampoules en mode appairage"
+      }
+    }
+  }
+}
