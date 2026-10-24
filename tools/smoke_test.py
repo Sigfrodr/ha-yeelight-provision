@@ -1,4 +1,4 @@
-"""Essai de fumee, a lancer dans l'image Home Assistant (voir tests/README.md).
+"""Essai de fumee sur le materiel, a lancer dans l'image Home Assistant (voir README).
 
 - import des modules de l'integration ;
 - echange miIO complet contre un faux appareil sur 127.0.0.1 ;

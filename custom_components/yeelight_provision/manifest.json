@@ -2,10 +2,12 @@
   "domain": "yeelight_provision",
   "name": "Yeelight Provision",
   "after_dependencies": ["yeelight"],
-  "codeowners": [],
+  "codeowners": ["@Sigfrodr"],
   "config_flow": true,
+  "documentation": "https://github.com/Sigfrodr/ha-yeelight-provision",
   "integration_type": "hub",
   "iot_class": "local_polling",
+  "issue_tracker": "https://github.com/Sigfrodr/ha-yeelight-provision/issues",
   "loggers": ["pyroute2"],
   "requirements": ["pyroute2>=0.9.6"],
   "version": "0.1.0"

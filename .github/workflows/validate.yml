@@ -1,0 +1,38 @@
+name: Validation
+
+on:
+  push:
+  pull_request:
+  schedule:
+    - cron: "0 6 * * 1" # chaque lundi : détecte une incompatibilité avec une nouvelle version de HA
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  hassfest:
+    name: Hassfest (Home Assistant)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: home-assistant/actions/hassfest@master
+
+  hacs:
+    name: Validation HACS
+    runs-on: ubuntu-latest
+    steps:
+      - uses: hacs/action@main
+        with:
+          category: integration
+
+  tests:
+    name: Tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+      - run: pip install pytest-homeassistant-custom-component pyroute2
+      - run: python -m pytest -q -p no:cacheprovider
