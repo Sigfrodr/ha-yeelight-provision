@@ -10,7 +10,7 @@ import pytest
 
 from custom_components.yeelight_provision import miio
 from custom_components.yeelight_provision.const import PAIRING_SSID_RE
-from custom_components.yeelight_provision.provision import _parse_ssdp
+from custom_components.yeelight_provision.provision import _parse_ssdp, async_find_on_lan
 from custom_components.yeelight_provision.wifi import _signal_dbm
 
 # Le harnais HA (pytest-socket) bloque les sockets ; le faux appareil ecoute
@@ -106,6 +106,32 @@ def test_parse_ssdp():
     )
     assert headers["location"] == "yeelight://192.0.2.7:55443"
     assert int(headers["id"], 16) == DID
+
+
+class FakeSsdpBulb(asyncio.DatagramProtocol):
+    """Repond au M-SEARCH Yeelight recu en unicast."""
+
+    def connection_made(self, transport):
+        self.transport = transport
+
+    def datagram_received(self, data, addr):
+        if data.startswith(b"M-SEARCH") and b"wifi_bulb" in data:
+            self.transport.sendto(
+                b"HTTP/1.1 200 OK\r\nLocation: yeelight://127.0.0.1:55443\r\n"
+                b"id: 0x0000000011770f83\r\n\r\n",
+                addr,
+            )
+
+
+async def test_find_on_lan_unicast():
+    transport, _ = await asyncio.get_running_loop().create_datagram_endpoint(
+        FakeSsdpBulb, local_addr=("127.0.0.1", 1982)
+    )
+    try:
+        assert await async_find_on_lan(DID, 3, ["127.0.0.1"]) == "127.0.0.1"
+        assert await async_find_on_lan(DID + 1, 1, ["127.0.0.1"]) is None
+    finally:
+        transport.close()
 
 
 def test_signal_dbm():

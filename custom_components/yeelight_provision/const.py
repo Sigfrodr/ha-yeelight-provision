@@ -33,3 +33,5 @@ AP_SUBNETS: tuple[tuple[str, str, int], ...] = (
 # Delai maximal pour voir l'ampoule sur le reseau domestique apres l'envoi des
 # identifiants Wi-Fi.
 LAN_DISCOVERY_TIMEOUT = 120
+# SSDP unicast : au-dela d'un /22 (1022 adresses), on s'en tient au multicast.
+MIN_UNICAST_PREFIX = 22

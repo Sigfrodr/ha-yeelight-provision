@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import asyncio
+from collections.abc import Sequence
 from dataclasses import dataclass
 import logging
 from typing import Any
@@ -119,10 +120,15 @@ def _parse_ssdp(data: bytes) -> dict[str, str]:
     return headers
 
 
-async def async_find_on_lan(device_id: int, timeout: float) -> str | None:
+async def async_find_on_lan(
+    device_id: int, timeout: float, unicast: Sequence[str] = ()
+) -> str | None:
     """Cherche l'ampoule en SSDP Yeelight ; renvoie son adresse IP.
 
     L'en-tete id (0x0000000011770f83) est l'identifiant miIO de l'appareil.
+    Le M-SEARCH part en multicast, et aussi en unicast vers chaque adresse de
+    unicast : un routeur peut ne pas relayer le multicast du filaire vers le
+    Wi-Fi, alors que l'ampoule repond a une requete directe.
     """
     loop = asyncio.get_running_loop()
     transport, proto = await loop.create_datagram_endpoint(
@@ -131,7 +137,11 @@ async def async_find_on_lan(device_id: int, timeout: float) -> str | None:
     try:
         deadline = loop.time() + timeout
         while loop.time() < deadline:
-            transport.sendto(SSDP_SEARCH, SSDP_ADDR)
+            for target in (SSDP_ADDR[0], *unicast):
+                try:
+                    transport.sendto(SSDP_SEARCH, (target, SSDP_ADDR[1]))
+                except OSError:  # pas de route multicast, adresse injoignable
+                    pass
             listen_until = min(deadline, loop.time() + 5)
             while (remaining := listen_until - loop.time()) > 0:
                 try:

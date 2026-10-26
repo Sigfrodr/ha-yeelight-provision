@@ -3,11 +3,13 @@
 from __future__ import annotations
 
 import asyncio
+from ipaddress import ip_network
 import logging
 from typing import Any
 
 import voluptuous as vol
 
+from homeassistant.components import network
 from homeassistant.config_entries import (
     SOURCE_USER,
     ConfigEntry,
@@ -17,7 +19,7 @@ from homeassistant.config_entries import (
     OptionsFlow,
 )
 from homeassistant.const import CONF_HOST
-from homeassistant.core import callback
+from homeassistant.core import HomeAssistant, callback
 from homeassistant.data_entry_flow import FlowResultType
 from homeassistant.helpers.selector import (
     NumberSelector,
@@ -41,6 +43,7 @@ from .const import (
     DOMAIN,
     HUB_UNIQUE_ID,
     LAN_DISCOVERY_TIMEOUT,
+    MIN_UNICAST_PREFIX,
     PAIRING_SSID_RE,
 )
 from .provision import ProvisionError, async_find_on_lan, async_provision
@@ -55,6 +58,19 @@ _INTERVAL_SELECTOR = NumberSelector(
     NumberSelectorConfig(min=0, max=60, step=1, mode=NumberSelectorMode.BOX,
                          unit_of_measurement="min")
 )
+
+
+async def _async_lan_hosts(hass: HomeAssistant) -> list[str]:
+    """Adresses des reseaux IPv4 de HA (jusqu'a /22), pour le SSDP unicast."""
+    hosts: list[str] = []
+    for adapter in await network.async_get_adapters(hass):
+        if not adapter["enabled"]:
+            continue
+        for ipv4 in adapter["ipv4"]:
+            net = ip_network(f"{ipv4['address']}/{ipv4['network_prefix']}", strict=False)
+            if net.prefixlen >= MIN_UNICAST_PREFIX:
+                hosts.extend(str(h) for h in net.hosts() if str(h) != ipv4["address"])
+    return hosts
 
 
 class YeelightProvisionConfigFlow(ConfigFlow, domain=DOMAIN):
@@ -255,7 +271,9 @@ class YeelightProvisionConfigFlow(ConfigFlow, domain=DOMAIN):
             "ssid": hub.data[CONF_SSID],
         }
 
-        host = await async_find_on_lan(result.device_id, LAN_DISCOVERY_TIMEOUT)
+        host = await async_find_on_lan(
+            result.device_id, LAN_DISCOVERY_TIMEOUT, await _async_lan_hosts(self.hass)
+        )
         if host is None:
             return {**outcome, "reason": "provisioned_not_found"}
         outcome["host"] = host
